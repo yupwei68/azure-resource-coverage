@@ -1,6 +1,7 @@
 package tfprovider
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
@@ -29,6 +30,9 @@ func LoadConfig(rootPath string) (*TerraformConfig, error) {
 			return nil, err
 		}
 		if client != nil && client.IsGoClient() {
+			if !strings.HasSuffix(client.GoSDKClient, "Client") {
+				return nil, fmt.Errorf("Go SDK client %q does not end with 'Client'", client.GoSDKClient)
+			}
 			result.Clients = append(result.Clients, client)
 		}
 	}

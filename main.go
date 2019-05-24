@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/JunyiYi/azure-resource-coverage/apispec"
 	"github.com/JunyiYi/azure-resource-coverage/coverage"
@@ -11,7 +13,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Azure Resource Coverage v0.0.1")
+	fmt.Println("Azure Resource Coverage Analyzer [v0.0.1]")
 
 	if valid, apiPath, tfPath := parseArguments(); valid {
 		spec, err := apispec.LoadFrom(apiPath)
@@ -23,12 +25,38 @@ func main() {
 		tf, err := tfprovider.LoadConfig(tfPath)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%+v", err)
-			os.Exit(-1)
+			os.Exit(-2)
 		}
-		fmt.Println(tf.FullPath)
 
 		cov := coverage.ToCoverage(spec)
-		fmt.Printf("Total coverage entries: %d\n", len(cov))
+		if err := cov.AnalyzeTerraformCoverage(tf); err != nil {
+			fmt.Fprintf(os.Stderr, "%+v", err)
+			os.Exit(-3)
+		}
+		fmt.Println("Namespace,Provider,Resource,Operations,Terraform Support")
+		for _, entry := range cov {
+			tfStatus := ""
+			if entry.InTerraform {
+				tfStatus = "yes"
+			}
+			ops := ""
+			if entry.Resource.SupportCreate() {
+				ops += "C"
+			}
+			if entry.Resource.SupportRead() {
+				ops += "R"
+			}
+			if entry.Resource.SupportUpdate() {
+				ops += "U"
+			}
+			if entry.Resource.SupportDelete() {
+				ops += "D"
+			}
+			if entry.Resource.SupportList() {
+				ops += "L"
+			}
+			fmt.Printf("%s,%s,%s,%s,%s\n", entry.NamespaceName, entry.ProviderName, entry.ResourceName, ops, tfStatus)
+		}
 	} else {
 		usage()
 	}
@@ -55,5 +83,10 @@ func parseArguments() (valid bool, apiPath string, tfPath string) {
 
 func usage() {
 	fmt.Println("Usage:")
+	exe := filepath.Base(os.Args[0])
+	fmt.Printf("  %s -api-spec-path <local path to azure-rest-api-specs>\n", exe)
+	fmt.Printf("  %s -terraform-path <local path to terraform-provider-azurerm>\n", strings.Repeat(" ", len(exe)))
+	fmt.Println()
+	fmt.Println("Arguments:")
 	flag.PrintDefaults()
 }

@@ -13,4 +13,5 @@ type CoverageEntry struct {
 	Provider      *apispec.ProviderDefinition
 	ResourceName  string
 	Resource      *apispec.ResourceDefinition
+	InTerraform   bool
 }

@@ -18,6 +18,7 @@ func ToCoverage(spec *apispec.ApiSpec) ResourceCoverage {
 					pvd,
 					resn,
 					res,
+					false,
 				})
 			}
 		}
