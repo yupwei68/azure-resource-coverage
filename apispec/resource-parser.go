@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func (pvd *ProviderDefinition) parseResourcesFromJson(jsonPath string, ver VersionDefinition) error {
+func (pvd *ProviderDefinition) parseResourcesFromJSON(jsonPath string, ver VersionDefinition) error {
 	content, err := ioutil.ReadFile(jsonPath)
 	if err != nil {
 		return fmt.Errorf("Error reading json file %q: %v", jsonPath, err)
@@ -17,16 +17,27 @@ func (pvd *ProviderDefinition) parseResourcesFromJson(jsonPath string, ver Versi
 		return fmt.Errorf("Error parsing json file %q: %v", jsonPath, err)
 	}
 
-	for pn, p := range swagger.Paths {
+	allPaths := make(map[string]map[string]interface{})
+	for k, v := range swagger.Paths {
+		allPaths[k] = v
+	}
+	for k, v := range swagger.xMsPaths {
+		if _, ok := allPaths[k]; ok {
+			return fmt.Errorf("Error merging x-ms-paths into paths due to duplicated path %q", k)
+		}
+		allPaths[k] = v
+	}
+
+	for pn, p := range allPaths {
 		for k, v := range p {
 			if k == "parameters" {
 				continue
 			}
 			op := v.(map[string]interface{})
-			if opId, ok := op["operationId"]; ok {
-				ids := strings.SplitN(opId.(string), "_", 2)
+			if opID, ok := op["operationId"]; ok {
+				ids := strings.SplitN(opID.(string), "_", 2)
 				if len(ids) != 1 && len(ids) != 2 {
-					return fmt.Errorf("Operation ID %q is invalid in %q (%q -> %q)", opId, jsonPath, pn, k)
+					return fmt.Errorf("Operation ID %q is invalid in %q (%q -> %q)", opID, jsonPath, pn, k)
 				}
 
 				resName := "<unknown>"

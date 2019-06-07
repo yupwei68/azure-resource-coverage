@@ -114,5 +114,5 @@ func (spec *ApiSpec) parseJson(jsonPath string) error {
 
 	ns := spec.getOrCreateNamespace(namespace, nsPath, nsType)
 	pvd := ns.getOrCreateProvider(provider, pvdPath)
-	return pvd.parseResourcesFromJson(jsonPath, VersionDefinition{isPreview, ver})
+	return pvd.parseResourcesFromJSON(jsonPath, VersionDefinition{isPreview, ver})
 }

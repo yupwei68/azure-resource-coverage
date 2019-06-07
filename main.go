@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Azure Resource Coverage Analyzer [v0.0.1]")
+	fmt.Println("Azure Resource Coverage Analyzer [v0.0.2]")
 
 	if valid, apiPath, tfPath := parseArguments(); valid {
 		spec, err := apispec.LoadFrom(apiPath)
@@ -82,6 +82,7 @@ func parseArguments() (valid bool, apiPath string, tfPath string) {
 }
 
 func usage() {
+	flag.CommandLine.SetOutput(os.Stdout)
 	fmt.Println("Usage:")
 	exe := filepath.Base(os.Args[0])
 	fmt.Printf("  %s -api-spec-path <local path to azure-rest-api-specs>\n", exe)
