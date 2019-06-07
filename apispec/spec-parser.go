@@ -33,7 +33,7 @@ func LoadFrom(rootPath string) (*ApiSpec, error) {
 
 	result := &ApiSpec{
 		specPath,
-		make(map[string]*NamespaceDefinition),
+		make(map[namespaceLocator]*NamespaceDefinition),
 	}
 	for _, json := range potentialJsons {
 		if err := result.parseJson(json); err != nil {

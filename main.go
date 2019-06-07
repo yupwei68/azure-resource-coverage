@@ -55,7 +55,7 @@ func main() {
 			if entry.Resource.SupportList() {
 				ops += "L"
 			}
-			fmt.Printf("%s,%s,%s,%s,%s\n", entry.NamespaceName, entry.ProviderName, entry.ResourceName, ops, tfStatus)
+			fmt.Printf("%s,%v,%s,%s,%s,%s\n", entry.Namespace.Name, entry.Namespace.Type, entry.ProviderName, entry.ResourceName, ops, tfStatus)
 		}
 	} else {
 		usage()

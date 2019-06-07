@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/JunyiYi/azure-resource-coverage/apispec"
 	"github.com/JunyiYi/azure-resource-coverage/tfprovider"
 )
 
@@ -21,22 +22,30 @@ func (cov ResourceCoverage) AnalyzeTerraformCoverage(tf *tfprovider.TerraformCon
 func (cov ResourceCoverage) findExactOneEntry(client *tfprovider.ReferencedClient) (*CoverageEntry, error) {
 	var found *CoverageEntry = nil
 	for _, entry := range cov {
-		nsMatch := strings.ToLower(client.GoSDKNamespace) == strings.ToLower(entry.NamespaceName)
-		if client.GoSDKNamespace == "documentdb" && entry.NamespaceName == "cosmos-db" ||
-			client.GoSDKNamespace == "appinsights" && entry.NamespaceName == "applicationinsights" ||
-			client.GoSDKNamespace == "insights" && entry.NamespaceName == "monitor" ||
-			client.GoSDKNamespace == "devices" && entry.NamespaceName == "iothub" ||
-			client.GoSDKNamespace == "dtl" && entry.NamespaceName == "devtestlabs" ||
-			client.GoSDKNamespace == "MsSql" && entry.NamespaceName == "sql" ||
-			client.GoSDKNamespace == "storeAccount" && entry.NamespaceName == "datalake-store" ||
-			client.GoSDKNamespace == "filesystem" && entry.NamespaceName == "datalake-store" ||
-			client.GoSDKNamespace == "analyticsAccount" && entry.NamespaceName == "datalake-analytics" ||
-			client.GoSDKNamespace == "media" && entry.NamespaceName == "mediaservices" ||
-			client.GoSDKNamespace == "backup" && entry.NamespaceName == "recoveryservicesbackup" ||
-			client.GoSDKNamespace == "locks" && entry.NamespaceName == "resources" ||
-			client.GoSDKNamespace == "resourcesprofile" && entry.NamespaceName == "resources" ||
-			client.GoSDKNamespace == "policy" && entry.NamespaceName == "resources" ||
-			client.GoSDKNamespace == "subscriptions" && entry.NamespaceName == "subscription" {
+		if entry.Namespace.Type == apispec.DataPlane && entry.Namespace.Name != "graphrbac" && entry.Namespace.Name != "datalake-store" {
+			continue
+		}
+
+		if entry.Namespace.Name == "apimanagement" && entry.Namespace.Type == apispec.ControlPlane {
+			continue
+		}
+
+		nsMatch := strings.ToLower(client.GoSDKNamespace) == strings.ToLower(entry.Namespace.Name)
+		if client.GoSDKNamespace == "documentdb" && entry.Namespace.Name == "cosmos-db" ||
+			client.GoSDKNamespace == "appinsights" && entry.Namespace.Name == "applicationinsights" ||
+			client.GoSDKNamespace == "insights" && entry.Namespace.Name == "monitor" ||
+			client.GoSDKNamespace == "devices" && entry.Namespace.Name == "iothub" ||
+			client.GoSDKNamespace == "dtl" && entry.Namespace.Name == "devtestlabs" ||
+			client.GoSDKNamespace == "MsSql" && entry.Namespace.Name == "sql" ||
+			client.GoSDKNamespace == "storeAccount" && entry.Namespace.Name == "datalake-store" ||
+			client.GoSDKNamespace == "filesystem" && entry.Namespace.Name == "datalake-store" ||
+			client.GoSDKNamespace == "analyticsAccount" && entry.Namespace.Name == "datalake-analytics" ||
+			client.GoSDKNamespace == "media" && entry.Namespace.Name == "mediaservices" ||
+			client.GoSDKNamespace == "backup" && entry.Namespace.Name == "recoveryservicesbackup" ||
+			client.GoSDKNamespace == "locks" && entry.Namespace.Name == "resources" ||
+			client.GoSDKNamespace == "resourcesprofile" && entry.Namespace.Name == "resources" ||
+			client.GoSDKNamespace == "policy" && entry.Namespace.Name == "resources" ||
+			client.GoSDKNamespace == "subscriptions" && entry.Namespace.Name == "subscription" {
 			nsMatch = true
 		}
 
@@ -46,7 +55,7 @@ func (cov ResourceCoverage) findExactOneEntry(client *tfprovider.ReferencedClien
 			client.GoSDKNamespace == "redis" && clientSDK == "" && entry.ResourceName == "Redis" ||
 			client.GoSDKNamespace == "apimanagement" && clientSDK == "Service" && entry.ResourceName == "ApiManagementService" ||
 			client.GoSDKNamespace == "filesystem" && clientSDK == "" && entry.ResourceName == "FileSystem" ||
-			client.GoSDKNamespace == "keyVault" && clientSDK == "Base" && entry.ResourceName == "<unknown>" ||
+			client.GoSDKNamespace == "keyVault" && clientSDK == "Base" && entry.ResourceName == "Secrets" ||
 			client.GoSDKNamespace == "managementgroups" && clientSDK == "" && entry.ResourceName == "ManagementGroups" ||
 			client.GoSDKNamespace == "managementgroups" && clientSDK == "Subscriptions" && entry.ResourceName == "ManagementGroupSubscriptions" ||
 			client.GoSDKNamespace == "network" && clientSDK == "Interfaces" && entry.ResourceName == "NetworkInterfaces" ||
@@ -65,7 +74,8 @@ func (cov ResourceCoverage) findExactOneEntry(client *tfprovider.ReferencedClien
 			client.GoSDKNamespace == "web" && clientSDK == "Apps" && entry.ResourceName == "Sites" ||
 			client.GoSDKNamespace == "policy" && clientSDK == "Assignments" && entry.ResourceName == "PolicyAssignments" && entry.ProviderName == "Microsoft.Authorization" ||
 			client.GoSDKNamespace == "policy" && clientSDK == "Definitions" && entry.ResourceName == "PolicyDefinitions" && entry.ProviderName == "Microsoft.Authorization" ||
-			client.GoSDKNamespace == "policy" && clientSDK == "SetDefinitions" && entry.ResourceName == "PolicySetDefinitions" && entry.ProviderName == "Microsoft.Authorization" {
+			client.GoSDKNamespace == "policy" && clientSDK == "SetDefinitions" && entry.ResourceName == "PolicySetDefinitions" && entry.ProviderName == "Microsoft.Authorization" ||
+			client.GoSDKNamespace == "batch" && clientSDK == "Account" && entry.ResourceName == "BatchAccount" {
 			resMatch = true
 		}
 		if client.GoSDKNamespace == "network" && clientSDK == "PublicIPAddresses" && entry.ResourceName == "PublicIpAddresses" {

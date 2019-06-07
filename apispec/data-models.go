@@ -1,11 +1,13 @@
 package apispec
 
 type ApiSpec struct {
-	FullPath   string
-	Namespaces map[string]*NamespaceDefinition
+	FullPath string
+
+	namespaces map[namespaceLocator]*NamespaceDefinition
 }
 
 type NamespaceDefinition struct {
+	Name         string
 	RelativePath string
 	Type         NamespaceType
 	Providers    map[string]*ProviderDefinition
@@ -35,6 +37,11 @@ type ResourceDefinition struct {
 type VersionDefinition struct {
 	IsPreview  bool
 	SDKVersion string
+}
+
+type namespaceLocator struct {
+	name string
+	typ  NamespaceType
 }
 
 type swagger struct {

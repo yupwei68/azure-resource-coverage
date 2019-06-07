@@ -1,14 +1,16 @@
 package apispec
 
 func (spec *ApiSpec) getOrCreateNamespace(name string, rel string, typ NamespaceType) *NamespaceDefinition {
-	if _, ok := spec.Namespaces[name]; !ok {
-		spec.Namespaces[name] = &NamespaceDefinition{
+	locator := namespaceLocator{name, typ}
+	if _, ok := spec.namespaces[locator]; !ok {
+		spec.namespaces[locator] = &NamespaceDefinition{
+			name,
 			rel,
 			typ,
 			make(map[string]*ProviderDefinition),
 		}
 	}
-	return spec.Namespaces[name]
+	return spec.namespaces[locator]
 }
 
 func (ns *NamespaceDefinition) getOrCreateProvider(name string, rel string) *ProviderDefinition {
