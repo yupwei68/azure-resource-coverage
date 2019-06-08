@@ -2,45 +2,67 @@ package tfprovider
 
 import (
 	"fmt"
+	"io/ioutil"
+	"regexp"
 	"strings"
 )
 
-func parseClient(def string) (*ReferencedClient, error) {
-	def = strings.TrimSpace(def)
-	if def == "" || strings.HasPrefix(def, "//") {
-		return nil, nil
+var clientRe = regexp.MustCompile(`:=\s*(?P<package>[^.:=]+)\.New(?P<client>[a-zA-Z_0-9]+)WithBaseURI`)
+
+func parseClients(path string) ([]*ReferencedClient, error) {
+	buf, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
 	}
-	segs := strings.Fields(def)
-	if (len(segs) < 2) || (len(segs) > 2 && !strings.HasPrefix(segs[2], "//")) {
-		return nil, fmt.Errorf("Invalid client definition %q", def)
+
+	clients := make([]*ReferencedClient, 0)
+	for _, match := range clientRe.FindAllStringSubmatch(string(buf), -1) {
+		client, err := parseClientReference(match)
+		if err != nil {
+			return nil, err
+		}
+		clients = append(clients, client)
 	}
-	field := segs[0]
-	parts := strings.Split(segs[1], ".")
-	if len(parts) != 1 && len(parts) != 2 {
-		return nil, fmt.Errorf("Invalid client type definition %q", segs[1])
+	return clients, nil
+}
+
+func parseClientReference(def []string) (*ReferencedClient, error) {
+	match, captures, err := toNamedCaptures(def, clientRe)
+	if err != nil {
+		return nil, err
 	}
-	ns := ""
-	sdk := parts[0]
-	if len(parts) == 2 {
-		ns = parts[0]
-		sdk = parts[1]
+
+	pkg, ok := captures["package"]
+	if !ok || pkg == "" {
+		return nil, fmt.Errorf("Cannot parse Go SDK package in %q", match)
 	}
+
+	client, ok := captures["client"]
+	if !ok || client == "" {
+		return nil, fmt.Errorf("Cannot parse Go SDK client in %q", match)
+	}
+
+	if !strings.HasSuffix(client, "Client") {
+		return nil, fmt.Errorf("Go SDK client %q does not end with 'Client'", client)
+	}
+
 	return &ReferencedClient{
-		field,
-		ns,
-		sdk,
+		pkg,
+		client,
 	}, nil
 }
 
-func (c *ReferencedClient) IsGoClient() bool {
-	if c.GoSDKNamespace == "" {
-		return false
+func toNamedCaptures(match []string, re *regexp.Regexp) (string, map[string]string, error) {
+	if match == nil {
+		return "", nil, fmt.Errorf("match must not be nil")
 	}
-	if c.GoSDKNamespace == "az" && c.GoSDKClient == "Environment" {
-		return false
+
+	captures := make(map[string]string)
+	for i, name := range re.SubexpNames() {
+		if i == 0 || name == "" {
+			continue
+		}
+		captures[name] = match[i]
 	}
-	if c.GoSDKNamespace == "context" && c.GoSDKClient == "Context" {
-		return false
-	}
-	return true
+	return match[0], captures, nil
 }
