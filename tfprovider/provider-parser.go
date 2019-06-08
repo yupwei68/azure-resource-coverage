@@ -12,7 +12,7 @@ func LoadConfig(rootPath string) (*TerraformConfig, error) {
 		return nil, err
 	}
 
-	clients, err := parseClients(path)
+	clients, err := parseClients(path, imports)
 	if err != nil {
 		return nil, err
 	}

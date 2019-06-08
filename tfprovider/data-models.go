@@ -7,8 +7,8 @@ type TerraformConfig struct {
 }
 
 type ReferencedClient struct {
-	GoSDKNamespace string
-	GoSDKClient    string
+	Package     *GoPackage
+	GoSDKClient string
 }
 
 type GoPackage struct {

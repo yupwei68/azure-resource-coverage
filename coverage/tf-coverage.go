@@ -30,67 +30,67 @@ func (cov ResourceCoverage) findExactOneEntry(client *tfprovider.ReferencedClien
 			continue
 		}
 
-		nsMatch := strings.ToLower(client.GoSDKNamespace) == strings.ToLower(entry.Namespace.Name)
-		if client.GoSDKNamespace == "documentdb" && entry.Namespace.Name == "cosmos-db" ||
-			client.GoSDKNamespace == "appinsights" && entry.Namespace.Name == "applicationinsights" ||
-			client.GoSDKNamespace == "insights" && entry.Namespace.Name == "monitor" ||
-			client.GoSDKNamespace == "devices" && entry.Namespace.Name == "iothub" ||
-			client.GoSDKNamespace == "dtl" && entry.Namespace.Name == "devtestlabs" ||
-			client.GoSDKNamespace == "MsSql" && entry.Namespace.Name == "sql" ||
-			client.GoSDKNamespace == "storeAccount" && entry.Namespace.Name == "datalake-store" ||
-			client.GoSDKNamespace == "filesystem" && entry.Namespace.Name == "datalake-store" ||
-			client.GoSDKNamespace == "analyticsAccount" && entry.Namespace.Name == "datalake-analytics" ||
-			client.GoSDKNamespace == "media" && entry.Namespace.Name == "mediaservices" ||
-			client.GoSDKNamespace == "backup" && entry.Namespace.Name == "recoveryservicesbackup" ||
-			client.GoSDKNamespace == "locks" && entry.Namespace.Name == "resources" ||
-			client.GoSDKNamespace == "resourcesprofile" && entry.Namespace.Name == "resources" ||
-			client.GoSDKNamespace == "policy" && entry.Namespace.Name == "resources" ||
-			client.GoSDKNamespace == "subscriptions" && entry.Namespace.Name == "subscription" {
+		nsMatch := strings.ToLower(client.Package.BaseName()) == strings.ToLower(entry.Namespace.Name)
+		if client.Package.BaseName() == "documentdb" && entry.Namespace.Name == "cosmos-db" ||
+			client.Package.BaseName() == "insights" && entry.Namespace.Name == "applicationinsights" ||
+			client.Package.BaseName() == "insights" && entry.Namespace.Name == "monitor" ||
+			client.Package.BaseName() == "devices" && entry.Namespace.Name == "iothub" ||
+			client.Package.BaseName() == "dtl" && entry.Namespace.Name == "devtestlabs" ||
+			client.Package.BaseName() == "MsSql" && entry.Namespace.Name == "sql" ||
+			client.Package.BaseName() == "account" && entry.Namespace.Name == "datalake-store" ||
+			client.Package.BaseName() == "filesystem" && entry.Namespace.Name == "datalake-store" ||
+			client.Package.BaseName() == "analyticsAccount" && entry.Namespace.Name == "datalake-analytics" ||
+			client.Package.BaseName() == "media" && entry.Namespace.Name == "mediaservices" ||
+			client.Package.BaseName() == "backup" && entry.Namespace.Name == "recoveryservicesbackup" ||
+			client.Package.BaseName() == "locks" && entry.Namespace.Name == "resources" ||
+			client.Package.BaseName() == "resourcesprofile" && entry.Namespace.Name == "resources" ||
+			client.Package.BaseName() == "policy" && entry.Namespace.Name == "resources" ||
+			client.Package.BaseName() == "subscriptions" && entry.Namespace.Name == "subscription" {
 			nsMatch = true
 		}
 
 		clientSDK := client.GoSDKClient[:len(client.GoSDKClient)-len("Client")]
 		resMatch := strings.ToLower(clientSDK) == strings.ToLower(entry.ResourceName)
-		if client.GoSDKNamespace == "automation" && clientSDK == "Account" && entry.ResourceName == "AutomationAccount" ||
-			client.GoSDKNamespace == "redis" && clientSDK == "" && entry.ResourceName == "Redis" ||
-			client.GoSDKNamespace == "apimanagement" && clientSDK == "Service" && entry.ResourceName == "ApiManagementService" ||
-			client.GoSDKNamespace == "filesystem" && clientSDK == "" && entry.ResourceName == "FileSystem" ||
-			client.GoSDKNamespace == "keyVault" && clientSDK == "Base" && entry.ResourceName == "Secrets" ||
-			client.GoSDKNamespace == "managementgroups" && clientSDK == "" && entry.ResourceName == "ManagementGroups" ||
-			client.GoSDKNamespace == "managementgroups" && clientSDK == "Subscriptions" && entry.ResourceName == "ManagementGroupSubscriptions" ||
-			client.GoSDKNamespace == "network" && clientSDK == "Interfaces" && entry.ResourceName == "NetworkInterfaces" ||
-			client.GoSDKNamespace == "network" && clientSDK == "Profiles" && entry.ResourceName == "NetworkProfiles" ||
-			client.GoSDKNamespace == "network" && clientSDK == "SecurityGroups" && entry.ResourceName == "NetworkSecurityGroups" ||
-			client.GoSDKNamespace == "network" && clientSDK == "Watchers" && entry.ResourceName == "NetworkWatchers" ||
-			client.GoSDKNamespace == "notificationhubs" && clientSDK == "" && entry.ResourceName == "NotificationHubs" ||
-			client.GoSDKNamespace == "backup" && clientSDK == "ProtectedItemsGroup" && entry.ResourceName == "ProtectableItems" ||
-			client.GoSDKNamespace == "resources" && clientSDK == "DeploymentsGroup" && entry.ResourceName == "Deployments" ||
-			client.GoSDKNamespace == "resources" && clientSDK == "GroupsGroup" && entry.ResourceName == "ResourceGroups" ||
-			client.GoSDKNamespace == "resources" && clientSDK == "Group" && entry.ResourceName == "Resources" ||
-			client.GoSDKNamespace == "subscriptions" && clientSDK == "Group" && entry.ResourceName == "Subscriptions" ||
-			client.GoSDKNamespace == "security" && clientSDK == "Contacts" && entry.ResourceName == "SecurityContacts" ||
-			client.GoSDKNamespace == "signalr" && clientSDK == "" && entry.ResourceName == "SignalR" ||
-			client.GoSDKNamespace == "storage" && clientSDK == "Accounts" && entry.ResourceName == "StorageAccounts" ||
-			client.GoSDKNamespace == "web" && clientSDK == "Apps" && entry.ResourceName == "Sites" ||
-			client.GoSDKNamespace == "policy" && clientSDK == "Assignments" && entry.ResourceName == "PolicyAssignments" && entry.ProviderName == "Microsoft.Authorization" ||
-			client.GoSDKNamespace == "policy" && clientSDK == "Definitions" && entry.ResourceName == "PolicyDefinitions" && entry.ProviderName == "Microsoft.Authorization" ||
-			client.GoSDKNamespace == "policy" && clientSDK == "SetDefinitions" && entry.ResourceName == "PolicySetDefinitions" && entry.ProviderName == "Microsoft.Authorization" ||
-			client.GoSDKNamespace == "batch" && clientSDK == "Account" && entry.ResourceName == "BatchAccount" {
+		if client.Package.BaseName() == "automation" && clientSDK == "Account" && entry.ResourceName == "AutomationAccount" ||
+			client.Package.BaseName() == "redis" && clientSDK == "" && entry.ResourceName == "Redis" ||
+			client.Package.BaseName() == "apimanagement" && clientSDK == "Service" && entry.ResourceName == "ApiManagementService" ||
+			client.Package.BaseName() == "filesystem" && clientSDK == "" && entry.ResourceName == "FileSystem" ||
+			client.Package.BaseName() == "keyVault" && clientSDK == "Base" && entry.ResourceName == "Secrets" ||
+			client.Package.BaseName() == "managementgroups" && clientSDK == "" && entry.ResourceName == "ManagementGroups" ||
+			client.Package.BaseName() == "managementgroups" && clientSDK == "Subscriptions" && entry.ResourceName == "ManagementGroupSubscriptions" ||
+			client.Package.BaseName() == "network" && clientSDK == "Interfaces" && entry.ResourceName == "NetworkInterfaces" ||
+			client.Package.BaseName() == "network" && clientSDK == "Profiles" && entry.ResourceName == "NetworkProfiles" ||
+			client.Package.BaseName() == "network" && clientSDK == "SecurityGroups" && entry.ResourceName == "NetworkSecurityGroups" ||
+			client.Package.BaseName() == "network" && clientSDK == "Watchers" && entry.ResourceName == "NetworkWatchers" ||
+			client.Package.BaseName() == "notificationhubs" && clientSDK == "" && entry.ResourceName == "NotificationHubs" ||
+			client.Package.BaseName() == "backup" && clientSDK == "ProtectedItemsGroup" && entry.ResourceName == "ProtectableItems" ||
+			client.Package.BaseName() == "resources" && clientSDK == "DeploymentsGroup" && entry.ResourceName == "Deployments" ||
+			client.Package.BaseName() == "resources" && clientSDK == "GroupsGroup" && entry.ResourceName == "ResourceGroups" ||
+			client.Package.BaseName() == "resources" && clientSDK == "Group" && entry.ResourceName == "Resources" ||
+			client.Package.BaseName() == "subscriptions" && clientSDK == "Group" && entry.ResourceName == "Subscriptions" ||
+			client.Package.BaseName() == "security" && clientSDK == "Contacts" && entry.ResourceName == "SecurityContacts" ||
+			client.Package.BaseName() == "signalr" && clientSDK == "" && entry.ResourceName == "SignalR" ||
+			client.Package.BaseName() == "storage" && clientSDK == "Accounts" && entry.ResourceName == "StorageAccounts" ||
+			client.Package.BaseName() == "web" && clientSDK == "Apps" && entry.ResourceName == "Sites" ||
+			client.Package.BaseName() == "policy" && clientSDK == "Assignments" && entry.ResourceName == "PolicyAssignments" && entry.ProviderName == "Microsoft.Authorization" ||
+			client.Package.BaseName() == "policy" && clientSDK == "Definitions" && entry.ResourceName == "PolicyDefinitions" && entry.ProviderName == "Microsoft.Authorization" ||
+			client.Package.BaseName() == "policy" && clientSDK == "SetDefinitions" && entry.ResourceName == "PolicySetDefinitions" && entry.ProviderName == "Microsoft.Authorization" ||
+			client.Package.BaseName() == "batch" && clientSDK == "Account" && entry.ResourceName == "BatchAccount" {
 			resMatch = true
 		}
-		if client.GoSDKNamespace == "network" && clientSDK == "PublicIPAddresses" && entry.ResourceName == "PublicIpAddresses" {
+		if client.Package.BaseName() == "network" && clientSDK == "PublicIPAddresses" && entry.ResourceName == "PublicIpAddresses" {
 			resMatch = false
 		}
 
 		if nsMatch && resMatch {
 			if found != nil {
-				return nil, fmt.Errorf("Found more than one client %v in coverage", client)
+				return nil, fmt.Errorf("Found more than one client (%v).%s in coverage", client.Package, client.GoSDKClient)
 			}
 			found = entry
 		}
 	}
 	if found == nil {
-		return nil, fmt.Errorf("Cannot find client %v in coverage", client)
+		return nil, fmt.Errorf("Cannot find client (%v).%s in coverage", client.Package, client.GoSDKClient)
 	}
 	return found, nil
 }
