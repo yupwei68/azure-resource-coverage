@@ -13,9 +13,9 @@ import (
 )
 
 func main() {
-	fmt.Println("Azure Resource Coverage Analyzer [v0.0.2]")
+	fmt.Println("Azure Resource Coverage Analyzer [v0.1.0]")
 
-	if valid, apiPath, tfPath := parseArguments(); valid {
+	if valid, apiPath, tfPath, configPath := parseArguments(); valid {
 		spec, err := apispec.LoadFrom(apiPath)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%+v", err)
@@ -28,13 +28,18 @@ func main() {
 			os.Exit(-2)
 		}
 
-		cov := coverage.ToCoverage(spec)
+		cov, err := coverage.NewCoverage(configPath)
+		if err != nil {
+			fmt.Fprint(os.Stderr, "%+v", err)
+			os.Exit(-3)
+		}
+		cov.LoadFromSpec(spec)
 		if err := cov.AnalyzeTerraformCoverage(tf); err != nil {
 			fmt.Fprintf(os.Stderr, "%+v", err)
 			os.Exit(-3)
 		}
-		fmt.Println("Namespace,Provider,Resource,Operations,Terraform Support")
-		for _, entry := range cov {
+		fmt.Println("Namespace,Type,Provider,Resource,Operations,Terraform Support")
+		for _, entry := range cov.Entries {
 			tfStatus := ""
 			if entry.InTerraform {
 				tfStatus = "yes"
@@ -62,10 +67,11 @@ func main() {
 	}
 }
 
-func parseArguments() (valid bool, apiPath string, tfPath string) {
+func parseArguments() (valid bool, apiPath, tfPath, configPath string) {
 	flag.Usage = usage
 	flag.StringVar(&apiPath, "api-spec-path", "", "Specify the local root folder path of azure-rest-api-specs Github repository")
 	flag.StringVar(&tfPath, "terraform-path", "", "Specify the local root folder path of terraform-provider-azurerm Github repository")
+	flag.StringVar(&configPath, "config", "resource-config.json", "Specify the resource configuration path")
 	flag.Parse()
 
 	valid = true
@@ -87,6 +93,7 @@ func usage() {
 	exe := filepath.Base(os.Args[0])
 	fmt.Printf("  %s -api-spec-path <local path to azure-rest-api-specs>\n", exe)
 	fmt.Printf("  %s -terraform-path <local path to terraform-provider-azurerm>\n", strings.Repeat(" ", len(exe)))
+	fmt.Printf("  %s [-config <resource configuration json file>]\n", strings.Repeat(" ", len(exe)))
 	fmt.Println()
 	fmt.Println("Arguments:")
 	flag.PrintDefaults()

@@ -4,10 +4,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"regexp"
-	"strings"
 )
 
-var clientRe = regexp.MustCompile(`:=\s*(?P<package>[^.:=]+)\.New(?P<client>[a-zA-Z_0-9]+)WithBaseURI`)
+// Regular expression should match the following:
+//   * <package>.New<client>ClientWithBaseURI(
+//   * <package>.NewClientWithBaseURI(
+//   * <package>.New<client>Client(
+//   * <package>.NewClient(
+var clientRe = regexp.MustCompile(`:=\s*(?P<package>[^.:=]+)\.New(?P<client>[a-zA-Z_0-9]*?)Client(?:WithBaseURI)?\(`)
 
 func parseClients(path string, packages []*GoPackage) ([]*ReferencedClient, error) {
 	refs, err := ToReferenceMap(packages)
@@ -48,12 +52,8 @@ func parseClientReference(def []string, refs map[string]*GoPackage) (*Referenced
 	}
 
 	client, ok := captures["client"]
-	if !ok || client == "" {
+	if !ok {
 		return nil, fmt.Errorf("Cannot parse Go SDK client in %q", match)
-	}
-
-	if !strings.HasSuffix(client, "Client") {
-		return nil, fmt.Errorf("Go SDK client %q does not end with 'Client'", client)
 	}
 
 	return &ReferencedClient{

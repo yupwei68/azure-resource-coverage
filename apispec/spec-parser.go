@@ -84,8 +84,8 @@ func (spec *ApiSpec) parseJson(jsonPath string) error {
 		provider = "<unknown>"
 	}
 
-	nsType := unknown
-	for nsType == unknown && ancestor != "." && ancestor != "" {
+	nsType := Unknown
+	for nsType == Unknown && ancestor != "." && ancestor != "" {
 		ancestor = filepath.Dir(ancestor)
 		name = filepath.Base(ancestor)
 		if name == "resource-manager" {
@@ -96,7 +96,7 @@ func (spec *ApiSpec) parseJson(jsonPath string) error {
 			nsType = ControlPlane
 		}
 	}
-	if nsType == unknown {
+	if nsType == Unknown {
 		return fmt.Errorf("Invalid json path %q, cannot parse NamespaceType", jsonPath)
 	}
 

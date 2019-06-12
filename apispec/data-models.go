@@ -19,8 +19,7 @@ const (
 	Management NamespaceType = iota
 	DataPlane
 	ControlPlane
-
-	unknown NamespaceType = -1
+	Unknown NamespaceType = -1
 )
 
 type ProviderDefinition struct {

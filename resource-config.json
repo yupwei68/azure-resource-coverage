@@ -1,0 +1,98 @@
+{
+  "api_spec": {
+    "excludes": [{
+      "namespace": "apimanagement",
+      "type": "control",
+      "comment": "A very old version of API Management (2017-03-01) is put under `control`-plane. ALL newer versions are put under `management`-plane, so we ignore the old one."
+    }, {
+      "namespace": "batch",
+      "type": "data",
+      "comment": "There are duplicated `batch` resources like `Account`, `Certificate` in both `data`-plane and `management`-plane. We choose to ignore the `data`-plane ones."
+    }, {
+      "namespace": "cognitiveservices",
+      "resource": "CognitiveServicesAccounts",
+      "comment": "This old resource (2016-02-01-preview) is replaced by the new `Accounts` resource (2017-04-18)."
+    }, {
+      "namespace": "network",
+      "resource": "PublicIpAddresses",
+      "comment": "This old resource (2015-05-01-preview) is replaced by the new `PublicIPAddresses` resource in all following versions."
+    }, {
+      "namespace": "resources",
+      "provider": "Microsoft.Resources",
+      "resource": "PolicyAssignments",
+      "comment": "`PolicyAssignments` resource is moved to `Microsoft.Authorization` provider, so we ignore the old one."
+    }, {
+      "namespace": "resources",
+      "provider": "Microsoft.Resources",
+      "resource": "PolicyDefinitions",
+      "comment": "`PolicyDefinitions` resource is moved to `Microsoft.Authorization` provider, so we ignore the old one."
+    }]
+  },
+
+  "terraform": {
+    "excludes": [{
+      "package": "github.com/Azure/azure-sdk-for-go/storage",
+      "comment": "This is a manually written Go SDK package for storage queue/table/blob, since they are not included in api_spec either, we will ignore them."
+    }],
+    "mappings": {
+      "github.com/Azure/azure-sdk-for-go/services/appinsights/mgmt/2015-05-01/insights": {
+        "api_spec_namespace": "applicationinsights"
+      },
+      "github.com/Azure/azure-sdk-for-go/services/cosmos-db/mgmt/2015-04-08/documentdb": {
+        "api_spec_namespace": "cosmos-db",
+        "comment": "DocumentDB is renamed to Cosmos DB."
+      },
+      "github.com/Azure/azure-sdk-for-go/services/datalake/analytics/mgmt/2016-11-01/account": {
+        "api_spec_namespace": "datalake-analytics"
+      },
+      "github.com/Azure/azure-sdk-for-go/services/datalake/store/mgmt/2016-11-01/account": {
+        "api_spec_namespace": "datalake-store"
+      },
+      "github.com/Azure/azure-sdk-for-go/services/datalake/store/2016-11-01/filesystem": {
+        "api_spec_namespace": "datalake-store"
+      },
+      "github.com/Azure/azure-sdk-for-go/services/devtestlabs/mgmt/2016-05-15/dtl": {
+        "api_spec_namespace": "devtestlabs"
+      },
+      "github.com/Azure/azure-sdk-for-go/services/mediaservices/mgmt/2018-07-01/media": {
+        "api_spec_namespace": "mediaservices"
+      },
+      "github.com/Azure/azure-sdk-for-go/services/preview/iothub/mgmt/2018-12-01-preview/devices": {
+        "api_spec_namespace": "iothub"
+      },
+      "github.com/Azure/azure-sdk-for-go/services/preview/resources/mgmt/2018-03-01-preview/managementgroups": {
+        "clients": {
+          "Subscriptions": {
+            "api_spec_resource": "ManagementGroupSubscriptions",
+            "comment": "Client name is missing one single 's'. By convention, it should be `ManagementGroup**s**Subscriptions`."
+          }
+        }
+      },
+      "github.com/Azure/azure-sdk-for-go/services/preview/monitor/mgmt/2018-03-01/insights": {
+        "api_spec_namespace": "monitor"
+      },
+      "github.com/Azure/azure-sdk-for-go/services/recoveryservices/mgmt/2017-07-01/backup": {
+        "api_spec_namespace": "recoveryservicesbackup"
+      },
+      "github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2016-09-01/locks": {
+        "api_spec_namespace": "resources",
+        "comment": "Management lock resources are actually located under `resources` namespace."
+      },
+      "github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2018-05-01/policy": {
+        "api_spec_namespace": "resources",
+        "comment": "Policy resources are actually located under `resources` namespace."
+      },
+      "github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2018-05-01/resources": {
+        "clients": {
+          "GroupsGroup": {
+            "api_spec_resource": "ResourceGroups"
+          }
+        }
+      },
+      "github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2016-06-01/subscriptions": {
+        "api_spec_namespace": "subscription",
+        "comment": "One single extra 's' in the package name."
+      }
+    }
+  }
+}
