@@ -1,6 +1,8 @@
 package apispec
 
-func (resource *ResourceDefinition) AdditionalOperations() []string {
+import "strings"
+
+func (resource *ResourceDefinition) Operations() []string {
 	operations := make([]string, 0)
 	for _, op := range resource.operations {
 		operations = append(operations, op)
@@ -8,29 +10,16 @@ func (resource *ResourceDefinition) AdditionalOperations() []string {
 	return operations
 }
 
-func (res *ResourceDefinition) SupportCreate() bool {
-	return res.supportOperation("create") || res.supportOperation("createorupdate")
+func (res *ResourceDefinition) SupportOperation(operation string) bool {
+	_, ok := res.operations[strings.ToLower(operation)]
+	return ok
 }
 
-func (res *ResourceDefinition) SupportRead() bool {
-	return res.supportOperation("get")
-}
-
-func (res *ResourceDefinition) SupportUpdate() bool {
-	return res.supportOperation("update") || res.supportOperation("createorupdate")
-}
-
-func (res *ResourceDefinition) SupportDelete() bool {
-	return res.supportOperation("delete")
-}
-
-func (res *ResourceDefinition) SupportList() bool {
-	return res.supportOperation("list")
-}
-
-func (res *ResourceDefinition) supportOperation(operation string) bool {
-	if _, ok := res.operations[operation]; ok {
-		return true
+func (res *ResourceDefinition) SupportAnyOperation(operations []string) bool {
+	for _, op := range operations {
+		if res.SupportOperation(op) {
+			return true
+		}
 	}
 	return false
 }

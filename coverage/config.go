@@ -5,6 +5,41 @@ import (
 	"github.com/JunyiYi/azure-resource-coverage/tfprovider"
 )
 
+func (operations apispecOperations) supportedOperations(entry *CoverageEntry) string {
+	for _, op := range operations {
+		matched := true
+		if op.Namespace != "" && op.Namespace != "*" && op.Namespace != entry.Namespace.Name {
+			matched = false
+		}
+		if op.Provider != "" && op.Provider != "*" && op.Provider != entry.ProviderName {
+			matched = false
+		}
+		if op.Resource != "" && op.Resource != "*" && op.Resource != entry.ResourceName {
+			matched = false
+		}
+		if matched {
+			opStr := ""
+			if entry.Resource.SupportAnyOperation(op.Create) {
+				opStr += "C"
+			}
+			if entry.Resource.SupportAnyOperation(op.Read) {
+				opStr += "R"
+			}
+			if entry.Resource.SupportAnyOperation(op.Update) {
+				opStr += "U"
+			}
+			if entry.Resource.SupportAnyOperation(op.Delete) {
+				opStr += "D"
+			}
+			if entry.Resource.SupportAnyOperation(op.List) {
+				opStr += "L"
+			}
+			return opStr
+		}
+	}
+	return ""
+}
+
 func (excludes apispecExcludes) isExcluded(entry *CoverageEntry) bool {
 	for _, excl := range excludes {
 		matched := true

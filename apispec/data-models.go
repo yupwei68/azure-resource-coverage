@@ -45,7 +45,7 @@ type namespaceLocator struct {
 
 type swagger struct {
 	Paths    map[string]swaggerPath
-	xMsPaths map[string]swaggerPath
+	XMsPaths map[string]swaggerPath `json:"x-ms-paths"`
 }
 
 type swaggerPath map[string]interface{}

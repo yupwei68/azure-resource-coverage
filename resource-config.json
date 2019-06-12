@@ -1,5 +1,20 @@
 {
   "api_spec": {
+    "operations": [{
+      "namespace": "trafficmanager",
+      "resource": "GeographicHierarchies",
+      "read": ["GetDefault"],
+      "comment": "This resource only supports get, and the operation name is `GetDefault`."
+    }, {
+      "namespace": "*",
+      "provider": "*",
+      "resource": "*",
+      "create": ["Create", "CreateOrUpdate"],
+      "read": ["Get", "GetProperties"],
+      "update": ["Update", "CreateOrUpdate"],
+      "delete": ["Delete"],
+      "list": ["List"]
+    }],
     "excludes": [{
       "namespace": "apimanagement",
       "type": "control",

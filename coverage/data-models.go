@@ -25,7 +25,21 @@ type config struct {
 }
 
 type apispecConfig struct {
-	Excludes apispecExcludes
+	Operations apispecOperations
+	Excludes   apispecExcludes
+}
+
+type apispecOperations []apispecOperation
+
+type apispecOperation struct {
+	Namespace string
+	Provider  string
+	Resource  string
+	Create    []string
+	Read      []string
+	Update    []string
+	Delete    []string
+	List      []string
 }
 
 type apispecExcludes []apispecExclude

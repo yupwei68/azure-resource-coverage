@@ -21,7 +21,7 @@ func (pvd *ProviderDefinition) parseResourcesFromJSON(jsonPath string, ver Versi
 	for k, v := range swagger.Paths {
 		allPaths[k] = v
 	}
-	for k, v := range swagger.xMsPaths {
+	for k, v := range swagger.XMsPaths {
 		if _, ok := allPaths[k]; ok {
 			return fmt.Errorf("Error merging x-ms-paths into paths due to duplicated path %q", k)
 		}

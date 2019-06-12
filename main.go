@@ -38,30 +38,7 @@ func main() {
 			fmt.Fprintf(os.Stderr, "%+v", err)
 			os.Exit(-3)
 		}
-		fmt.Println("Namespace,Type,Provider,Resource,Operations,Terraform Support")
-		for _, entry := range cov.Entries {
-			tfStatus := ""
-			if entry.InTerraform {
-				tfStatus = "yes"
-			}
-			ops := ""
-			if entry.Resource.SupportCreate() {
-				ops += "C"
-			}
-			if entry.Resource.SupportRead() {
-				ops += "R"
-			}
-			if entry.Resource.SupportUpdate() {
-				ops += "U"
-			}
-			if entry.Resource.SupportDelete() {
-				ops += "D"
-			}
-			if entry.Resource.SupportList() {
-				ops += "L"
-			}
-			fmt.Printf("%s,%v,%s,%s,%s,%s\n", entry.Namespace.Name, entry.Namespace.Type, entry.ProviderName, entry.ResourceName, ops, tfStatus)
-		}
+		cov.OutputCsv()
 	} else {
 		usage()
 	}
