@@ -7,9 +7,11 @@ import (
 )
 
 var importRe = regexp.MustCompile(`(?sU)import\s+\((?P<imports>.+)\)`)
-var pkgDefRe = regexp.MustCompile(`(?m)^\s*(?P<alias>[a-zA-Z0-9]+)?\s*"(?P<package>.+)"\s*$`)
+var pkgDefRe = regexp.MustCompile(`(?m)^\s*(?P<alias>[a-zA-Z0-9]+)?\s*"(?P<packageprefix>.+/)(?P<apiversion>[0-9-.vV]+[a-zA-Z0-9]+)(?P<packagesuffix>/.+)"\s*$`)
 
 func parsePackages(path string) ([]*GoPackage, error) {
+	pkgs := make([]*GoPackage, 0)
+
 	buf, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to parse Go packages in %q: %v", path, err)
@@ -21,7 +23,6 @@ func parsePackages(path string) ([]*GoPackage, error) {
 		return nil, fmt.Errorf("Failed to parse Go packages in %q: %v", path, err)
 	}
 
-	pkgs := make([]*GoPackage, 0)
 	for _, def := range pkgDefRe.FindAllStringSubmatch(imports, -1) {
 		pkg, err := parsePackage(def)
 		if err != nil {
@@ -54,13 +55,26 @@ func parsePackage(def []string) (*GoPackage, error) {
 
 	alias := captures["alias"]
 
-	pkg, ok := captures["package"]
-	if !ok || pkg == "" {
-		return nil, fmt.Errorf("Cannot parse Go package name in %q", m)
+	pkgPrefix, ok := captures["packageprefix"]
+	if !ok || pkgPrefix == "" {
+		return nil, fmt.Errorf("Cannot parse Go package prefix name in %q", m)
 	}
+
+	apiVersion, ok := captures["apiversion"]
+	if !ok || apiVersion == "" {
+		return nil, fmt.Errorf("Cannot parse Go api version in %q", m)
+	}
+
+	packageSuffix, ok := captures["packagesuffix"]
+	if !ok || packageSuffix == "" {
+		return nil, fmt.Errorf("Cannot parse Go package suffix name in %q", m)
+	}
+
+	pkg := pkgPrefix + apiVersion + packageSuffix
 
 	return &GoPackage{
 		alias,
 		pkg,
+		apiVersion,
 	}, nil
 }

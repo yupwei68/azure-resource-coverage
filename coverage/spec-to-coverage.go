@@ -1,9 +1,8 @@
 package coverage
 
 import (
-	"sort"
-
 	"github.com/JunyiYi/azure-resource-coverage/apispec"
+	"sort"
 )
 
 func (cov *ResourceCoverage) LoadFromSpec(spec *apispec.ApiSpec) {

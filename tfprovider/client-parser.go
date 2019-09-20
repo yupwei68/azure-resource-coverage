@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"regexp"
+	"strconv"
 )
 
 // Regular expression should match the following:
@@ -13,26 +14,56 @@ import (
 //   * <package>.NewClient(
 var clientRe = regexp.MustCompile(`:=\s*(?P<package>[^.:=]+)\.New(?P<client>[a-zA-Z_0-9]*?)Client(?:WithBaseURI)?\(`)
 
-func parseClients(path string, packages []*GoPackage) ([]*ReferencedClient, error) {
+func parseClients(path string, packages []*GoPackage, clients *[]ReferencedClient) (error) {
 	refs, err := ToReferenceMap(packages)
 	if err != nil {
-		return nil, fmt.Errorf("Cannot parse Azure Go client references in %q: %v", path, err)
+		return fmt.Errorf("Cannot parse Azure go packages in %q: %v", path, err)
 	}
 
 	buf, err := ioutil.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("Cannot parse Azure Go client references in %q: %v", path, err)
+		return fmt.Errorf("Cannot parse Azure go client file in %q: %v", path, err)
 	}
 
-	clients := make([]*ReferencedClient, 0)
 	for _, match := range clientRe.FindAllStringSubmatch(string(buf), -1) {
-		client, err := parseClientReference(match, refs)
+		newClient, err := parseClientReference(match, refs)
 		if err != nil {
-			return nil, fmt.Errorf("Cannot parse Azure Go client references in %q: %v", path, err)
+			return fmt.Errorf("Cannot parse Azure Go client references in %q: %v", path, err)
 		}
-		clients = append(clients, client)
+
+		pkgNameSame := false
+		pkgPathSame := false
+		clientNameSame := false
+		for _, existedClient := range *clients {
+			if existedClient.Package == newClient.Package {
+				pkgNameSame = true
+				if existedClient.Package.Package == newClient.Package.Package {
+					pkgPathSame = true
+					if existedClient.GoSDKClient == newClient.GoSDKClient {
+						clientNameSame = true
+					}
+				}
+			}
+		}
+
+		i := 1
+		if clientNameSame {
+			if pkgNameSame {
+				if pkgPathSame {
+					continue
+				} else {
+					newClient.Package.Alias = newClient.Package.ReferenceName() + "_" + strconv.Itoa(i)
+					*clients = append(*clients, *newClient)
+					i += 1
+				}
+			} else {
+				*clients = append(*clients, *newClient)
+			}
+		} else {
+			*clients = append(*clients, *newClient)
+		}
 	}
-	return clients, nil
+	return nil
 }
 
 func parseClientReference(def []string, refs map[string]*GoPackage) (*ReferencedClient, error) {

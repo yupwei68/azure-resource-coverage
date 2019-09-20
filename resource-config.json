@@ -107,6 +107,22 @@
       "github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2016-06-01/subscriptions": {
         "api_spec_namespace": "subscription",
         "comment": "One single extra 's' in the package name."
+      },
+      "github.com/Azure/azure-sdk-for-go/services/provisioningservices/mgmt/2018-01-22/iothub": {
+        "api_spec_namespace": "deviceprovisioningservices",
+        "comment": "iothub alias name."
+      },
+      "github.com/Azure/azure-sdk-for-go/services/kusto/mgmt/2019-05-15/kusto": {
+        "api_spec_namespace": "azure-kusto",
+        "comment": "azure kusto alias name."
+      },
+      "github.com/Azure/azure-sdk-for-go/services/recoveryservices/mgmt/2018-01-10/siterecovery": {
+        "api_spec_namespace": "recoveryservicessiterecovery",
+        "comment": "recovery services site recovery alias name."
+      },
+      "github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2018-06-01/subscriptions": {
+        "api_spec_namespace": "resources",
+        "comment": "subscripitons alias name."
       }
     }
   }

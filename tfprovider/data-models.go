@@ -1,9 +1,7 @@
 package tfprovider
 
 type TerraformConfig struct {
-	FullPath string
-	Imports  []*GoPackage
-	Clients  []*ReferencedClient
+	Clients  *[]ReferencedClient
 }
 
 type ReferencedClient struct {
@@ -14,4 +12,5 @@ type ReferencedClient struct {
 type GoPackage struct {
 	Alias   string
 	Package string
+	ApiVersion string
 }

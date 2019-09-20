@@ -62,7 +62,7 @@ func (excludes apispecExcludes) isExcluded(entry *CoverageEntry) bool {
 	return false
 }
 
-func (excludes goClientExcludes) isExcluded(client *tfprovider.ReferencedClient) bool {
+func (excludes goClientExcludes) isExcluded(client tfprovider.ReferencedClient) bool {
 	for _, excl := range excludes {
 		matched := true
 		if excl.Package != "" && excl.Package != "*" && excl.Package != client.Package.Package {

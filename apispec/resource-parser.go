@@ -43,7 +43,7 @@ func (pvd *ProviderDefinition) parseResourcesFromJSON(jsonPath string, ver Versi
 				resName := "<unknown>"
 				opName := ids[0]
 				if len(ids) == 2 {
-					resName = ids[0]
+					resName = strings.ToLower(ids[0])
 					opName = ids[1]
 				}
 				res := pvd.getOrCreateResource(resName)
