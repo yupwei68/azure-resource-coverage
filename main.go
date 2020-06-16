@@ -46,8 +46,8 @@ func main() {
 
 func parseArguments() (valid bool, apiPath, tfPath, configPath string) {
 	flag.Usage = usage
-	flag.StringVar(&apiPath, "api-spec-path", "", "Specify the local root folder path of azure-rest-api-specs Github repository")
-	flag.StringVar(&tfPath, "terraform-path", "", "Specify the local root folder path of terraform-provider-azurerm Github repository")
+	flag.StringVar(&apiPath, "api-spec-path", "C:\\Users\\yupwei\\go\\src\\github.com\\Azure\\azure-rest-api-specs", "Specify the local root folder path of azure-rest-api-specs Github repository")
+	flag.StringVar(&tfPath, "terraform-path", "C:\\Users\\yupwei\\go\\src\\github.com\\terraform-providers\\terraform-provider-azurerm", "Specify the local root folder path of terraform-provider-azurerm Github repository")
 	flag.StringVar(&configPath, "config", "resource-config.json", "Specify the resource configuration path")
 	flag.Parse()
 

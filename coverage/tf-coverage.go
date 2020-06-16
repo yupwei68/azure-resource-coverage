@@ -53,21 +53,21 @@ func (cov ResourceCoverage) findExactOneEntry(client tfprovider.ReferencedClient
 			continue
 		}
 
-		if found != nil {
-			resClientApiVersion := client.Package.ApiVersion
-			isVersionMatch := false
-			for _, apiVer := range entry.Resource.Versions {
-				if apiVer.SDKVersion == resClientApiVersion {
-					isVersionMatch = true
-				}
-			}
-
-			if isVersionMatch {
-				return nil, fmt.Errorf("Found more than one client (%s).%s in coverage", client.Package.ReferenceName(), client.GoSDKClient)
-			} else {
-				continue
-			}
-		}
+		//if found != nil {
+		//	resClientApiVersion := client.Package.ApiVersion
+		//	isVersionMatch := false
+		//	for _, apiVer := range entry.Resource.Versions {
+		//		if apiVer.SDKVersion == resClientApiVersion {
+		//			isVersionMatch = true
+		//		}
+		//	}
+		//
+		//	if isVersionMatch {
+		//		return nil, fmt.Errorf("Found more than one client (%s).%s in coverage", client.Package.ReferenceName(), client.GoSDKClient)
+		//	} else {
+		//		continue
+		//	}
+		//}
 		found = entry
 	}
 	if found == nil {

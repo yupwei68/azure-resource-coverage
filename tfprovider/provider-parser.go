@@ -46,8 +46,5 @@ func getServicePaths(rootPath string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	computeServicePath := filepath.Join(rootPath, "azurerm", "internal", "clients", "compute.go")
-	paths = append(paths, computeServicePath)
 	return paths, err
 }

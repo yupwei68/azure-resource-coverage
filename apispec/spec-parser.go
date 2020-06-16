@@ -15,15 +15,8 @@ func LoadFrom(rootPath string) (*ApiSpec, error) {
 			return err
 		}
 
-		if filepath.Ext(path) == ".json" {
-			parent := filepath.Base(filepath.Dir(path))
-			isCommon := f.Name() == "Common.json" || parent == "Common"
-			isTypes := f.Name() == "types.json" || parent == "entityTypes"
-			isQuickstart := parent == "quickstart-templates"
-			isDefinition := parent == "definitions"
-			if !isCommon && !isTypes && !isQuickstart && !isDefinition {
+		if filepath.Ext(path) == ".json" && filepath.VerifyFilePath(path) {
 				potentialJsons = append(potentialJsons, path)
-			}
 		}
 		return nil
 	})

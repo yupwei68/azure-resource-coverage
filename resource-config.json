@@ -123,6 +123,34 @@
       "github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2018-06-01/subscriptions": {
         "api_spec_namespace": "resources",
         "comment": "subscripitons alias name."
+      },
+      "github.com/Azure/azure-sdk-for-go/services/costmanagement/mgmt/2019-10-01/costmanagement": {
+        "api_spec_namespace": "cost-management",
+        "comment": "cost management alias name."
+      },
+      "github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-07-01/managedapplications": {
+        "api_spec_namespace": "resources",
+        "comment": "managedapplications is in resources"
+      },
+      "github.com/Azure/azure-sdk-for-go/services/preview/monitor/mgmt/2019-06-01/insights": {
+        "api_spec_namespace": "monitor",
+        "comment": "insights alias name."
+      },
+      "github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2018-05-01/policy": {
+        "api_spec_namespace": "resources",
+        "comment": "policy is in resources"
+      },
+      "github.com/Azure/azure-sdk-for-go/services/recoveryservices/mgmt/2019-05-13/backup": {
+        "api_spec_namespace": "recoveryservicesbackup",
+        "comment": "backup alias name"
+      },
+      "github.com/Azure/azure-sdk-for-go/services/preview/securityinsight/mgmt/2019-01-01-preview/securityinsight": {
+        "api_spec_namespace": "securityinsights",
+        "comment": "securityinsight alias name"
+      },
+      "github.com/Azure/azure-sdk-for-go/services/preview/iothub/mgmt/2019-03-22-preview/devices": {
+        "api_spec_namespace": "iothub",
+        "comment": "devices alias name"
       }
     }
   }
