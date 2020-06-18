@@ -151,6 +151,14 @@
       "github.com/Azure/azure-sdk-for-go/services/preview/iothub/mgmt/2019-03-22-preview/devices": {
         "api_spec_namespace": "iothub",
         "comment": "devices alias name"
+      },
+      "github.com/Azure/azure-sdk-for-go/services/kusto/mgmt/2020-02-15/kusto": {
+        "api_spec_namespace": "azure-kusto",
+        "comment": "kusto alias name"
+      },
+      "github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-09-01/policy": {
+        "api_spec_namespace": "resources",
+        "comment": "policy is in resources"
       }
     }
   }

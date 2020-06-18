@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"regexp"
 	"strings"
 )
 
@@ -48,6 +49,10 @@ func (pvd *ProviderDefinition) parseResourcesFromJSON(jsonPath string, ver Versi
 				}
 				res := pvd.getOrCreateResource(resName)
 				res.appendVersion(ver)
+				if res.OperationReqPath == ""{
+					re := regexp.MustCompile(`\/{(\w)+}`)
+					res.OperationReqPath = re.ReplaceAllString(pn,``)
+				}
 				res.operations[strings.ToLower(opName)] = opName
 			} else {
 				return fmt.Errorf("No operationId found in %q (%q -> %q)", jsonPath, pn, k)

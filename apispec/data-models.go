@@ -31,6 +31,7 @@ type ResourceDefinition struct {
 	Versions []VersionDefinition
 
 	operations map[string]string
+	OperationReqPath string
 }
 
 type VersionDefinition struct {

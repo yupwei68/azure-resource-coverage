@@ -69,6 +69,7 @@ func (cov ResourceCoverage) findExactOneEntry(client tfprovider.ReferencedClient
 		//	}
 		//}
 		found = entry
+		return found, nil
 	}
 	if found == nil {
 		return nil, fmt.Errorf("Cannot find client (%s).%s in coverage", client.Package.ReferenceName(), client.GoSDKClient)

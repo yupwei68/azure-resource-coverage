@@ -1,6 +1,8 @@
 package apispec
 
-import "strings"
+import (
+	"strings"
+)
 
 func (resource *ResourceDefinition) Operations() []string {
 	operations := make([]string, 0)
@@ -11,8 +13,14 @@ func (resource *ResourceDefinition) Operations() []string {
 }
 
 func (res *ResourceDefinition) SupportOperation(operation string) bool {
-	_, ok := res.operations[strings.ToLower(operation)]
-	return ok
+	// k is lowercase swagger ops name, v is ops name
+	// k may be `addsServices_listMetricsAverage`, startswtih `list`
+	for k,_:= range(res.operations){
+		if strings.HasPrefix(k,strings.ToLower(operation)){
+			return true
+		}
+	}
+	return false
 }
 
 func (res *ResourceDefinition) SupportAnyOperation(operations []string) bool {
@@ -22,4 +30,8 @@ func (res *ResourceDefinition) SupportAnyOperation(operations []string) bool {
 		}
 	}
 	return false
+}
+
+func (v VersionDefinition) String() string{
+   return v.SDKVersion
 }

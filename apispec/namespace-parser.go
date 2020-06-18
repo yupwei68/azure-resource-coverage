@@ -28,6 +28,7 @@ func (pvd *ProviderDefinition) getOrCreateResource(name string) *ResourceDefinit
 		pvd.Resources[name] = &ResourceDefinition{
 			make([]VersionDefinition, 0),
 			make(map[string]string),
+			"",
 		}
 	}
 	return pvd.Resources[name]
