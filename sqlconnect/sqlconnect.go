@@ -11,7 +11,7 @@ import (
 
 var db *sql.DB
 
-var server = "sqlserver.database.windows.net"
+var server = ".database.windows.net"
 var port = 1433
 var user = ""
 var password = ""
@@ -59,6 +59,7 @@ func CreateCoverage(nameSpace string,typeName string, providerName string, resou
 		tfsupport =1
 	}
 
+	//fmt.Printf("INSERT INTO TFCoverage.Coverage (Namespace,TypeName,ProviderName,ResourceName,OperationReqPath,Versions,Operations,TFSupport,UpdateDate) VALUES (%s, %s, %s,%s,%s,%s,%s,%s,%s)\n",nameSpace ,typeName , providerName , resourceName , opsReqPath, versions, ops , d , support)
 	tsql:= "INSERT INTO TFCoverage.Coverage (Namespace,TypeName,ProviderName,ResourceName,OperationReqPath,Versions,Operations,TFSupport,UpdateDate) VALUES (@Namespace, @TypeName, @ProviderName,@ResourceName,@OperationReqPath,@Versions,@Operations,@TFSupport,@UpdateDate); select convert(bigint, SCOPE_IDENTITY());"
 
 	stmt, err := db.Prepare(tsql)
@@ -85,4 +86,24 @@ func CreateCoverage(nameSpace string,typeName string, providerName string, resou
 	}
 
 	return newID, nil
+}
+
+func DeleteAll() (int64, error) {
+	ctx := context.Background()
+
+	// Check if database is alive.
+	err := db.PingContext(ctx)
+	if err != nil {
+		return -1, err
+	}
+
+	tsql := fmt.Sprintf("DELETE FROM TFCoverage.Coverage;")
+
+	// Execute non-query with named parameters
+	result, err := db.ExecContext(ctx, tsql)
+	if err != nil {
+		return -1, err
+	}
+
+	return result.RowsAffected()
 }

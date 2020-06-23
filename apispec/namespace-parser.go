@@ -16,20 +16,25 @@ func (spec *ApiSpec) getOrCreateNamespace(name string, rel string, typ Namespace
 func (ns *NamespaceDefinition) getOrCreateProvider(name string, rel string) *ProviderDefinition {
 	if _, ok := ns.Providers[name]; !ok {
 		ns.Providers[name] = &ProviderDefinition{
-			rel,
-			make(map[string]*ResourceDefinition),
+			RelativePath:rel,
+			ResourceList:ResourceList{
+				Index:0,
+				Resources: make(map[int32]*ResourceDefinition),
+			},
+			ResourceNameMap:make(map[string]int32),
+			OpsPathMap:make(map[string]int32),
 		}
 	}
 	return ns.Providers[name]
 }
 
-func (pvd *ProviderDefinition) getOrCreateResource(name string) *ResourceDefinition {
-	if _, ok := pvd.Resources[name]; !ok {
-		pvd.Resources[name] = &ResourceDefinition{
-			make([]VersionDefinition, 0),
-			make(map[string]string),
-			"",
+func (pvd *ProviderDefinition) createResource() int32 {
+	pvd.ResourceList.Index = pvd.ResourceList.Index+1
+	pvd.ResourceList.Resources[pvd.ResourceList.Index] = &ResourceDefinition{
+		Versions: make([]VersionDefinition,0),
+		Name:     make(map[string]string),
+		operations: make(map[string]string),
+		OperationReqPath:make(map[string]string),
 		}
-	}
-	return pvd.Resources[name]
+	return pvd.ResourceList.Index
 }

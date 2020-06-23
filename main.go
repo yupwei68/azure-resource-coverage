@@ -38,8 +38,8 @@ func main() {
 			fmt.Fprintf(os.Stderr, "%+v", err)
 			os.Exit(-3)
 		}
-		//cov.OutputSqlServer()
-		cov.OutputCsv()
+		cov.OutputSqlServer()
+		//cov.OutputCsv()
 	} else {
 		usage()
 	}

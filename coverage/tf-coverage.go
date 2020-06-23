@@ -11,12 +11,9 @@ import (
 func (cov *ResourceCoverage) AnalyzeTerraformCoverage(tf *tfprovider.TerraformConfig) error {
 	for _, client := range *tf.Clients {
 		if !cov.configuration.Terraform.Excludes.isExcluded(client) {
-			entry, err := cov.findExactOneEntry(client)
+			_, err := cov.findExactOneEntry(client)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "warn: %v\n", err)
-			}
-			if entry != nil {
-				entry.InTerraform = true
 			}
 		}
 	}
@@ -48,9 +45,11 @@ func (cov ResourceCoverage) findExactOneEntry(client tfprovider.ReferencedClient
 			resClientAlt2 = strings.TrimRight(nsClient, "s") + resClient
 		}
 
-		resName := strings.ToLower(entry.ResourceName)
-		if resClient != resName && resClientAlt != resName && resClientAlt2 != resName {
-			continue
+		for resName :=  range(entry.ResourceName){
+			if resClient == strings.ToLower(resName) || resClientAlt == strings.ToLower(resName) || resClientAlt2 == strings.ToLower(resName) {
+				found = entry
+				entry.InTerraform = true
+			}
 		}
 
 		//if found != nil {
@@ -68,8 +67,7 @@ func (cov ResourceCoverage) findExactOneEntry(client tfprovider.ReferencedClient
 		//		continue
 		//	}
 		//}
-		found = entry
-		return found, nil
+
 	}
 	if found == nil {
 		return nil, fmt.Errorf("Cannot find client (%s).%s in coverage", client.Package.ReferenceName(), client.GoSDKClient)

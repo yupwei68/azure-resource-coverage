@@ -5,6 +5,7 @@ import (
 	"github.com/JunyiYi/azure-resource-coverage/apispec"
 	"github.com/JunyiYi/azure-resource-coverage/sqlconnect"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -17,14 +18,24 @@ func (cov *ResourceCoverage) OutputCsv() {
 		if entry.InTerraform {
 			tfStatus = "yes"
 		}
-		fmt.Printf("%s,%s,%s,%s,%s,%s,%s,%s\n", entry.Namespace.Name, nsType, entry.ProviderName, entry.ResourceName,entry.Resource.OperationReqPath, entry.Resource.Versions,ops, tfStatus)
+		resNames := []string{}
+		opsPaths := []string{}
+		for k,_ := range(entry.ResourceName){
+			resNames = append(resNames, k)
+		}
+		for k,_ :=range(entry.Resource.OperationReqPath){
+			opsPaths = append(opsPaths,k)
+		}
+		fmt.Printf("%s,%s,%s,%s,%s,%s,%s,%s\n", entry.Namespace.Name, nsType, entry.ProviderName, strings.Join(resNames," | "),strings.Join(opsPaths," | "), entry.Resource.Versions,ops, tfStatus)
 	}
 }
 
 func (cov *ResourceCoverage) OutputSqlServer() {
-	fmt.Println("Namespace,Type,Provider,Resource,Operations,Terraform Support")
 	if sqlconnect.Connect(){
 		d := time.Now().Format("2006-01-02")
+		if _, err :=sqlconnect.DeleteAll();err!=nil{
+			log.Fatal("Error deleting all from Coverage:", err.Error())
+		}
 		for _, entry := range cov.Entries {
 			nsType := nsTypeToOutputString(entry.Namespace.Type)
 			ops := cov.configuration.APISpec.Operations.supportedOperations(entry)
@@ -33,11 +44,17 @@ func (cov *ResourceCoverage) OutputSqlServer() {
 				tfStatus = "yes"
 			}
 			versions := fmt.Sprintf("%s",entry.Resource.Versions)
-			createID, err := sqlconnect.CreateCoverage(entry.Namespace.Name,nsType,entry.ProviderName,entry.ResourceName,entry.Resource.OperationReqPath,versions,ops,d,tfStatus=="yes")
+			resNames := []string{}
+			for k,_ := range(entry.ResourceName){
+				resNames = append(resNames, k)
+			}
+			for opsPath,_:=range(entry.Resource.OperationReqPath){
+			createID, err := sqlconnect.CreateCoverage(entry.Namespace.Name,nsType,entry.ProviderName,strings.Join(resNames," | ") ,opsPath,versions,ops,d,tfStatus=="yes")
 			if err != nil {
-				log.Fatal("Error creating Employee: ", err.Error())
+				log.Fatal("Error creating Coverage Entry: ", err.Error())
 			}
 			fmt.Printf("Inserted ID: %d successfully.\n", createID)
+			}
 		}
 	}
 }

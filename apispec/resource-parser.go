@@ -47,13 +47,31 @@ func (pvd *ProviderDefinition) parseResourcesFromJSON(jsonPath string, ver Versi
 					resName = strings.ToLower(ids[0])
 					opName = ids[1]
 				}
-				res := pvd.getOrCreateResource(resName)
-				res.appendVersion(ver)
-				if res.OperationReqPath == ""{
-					re := regexp.MustCompile(`\/{(\w)+}`)
-					res.OperationReqPath = re.ReplaceAllString(pn,``)
+				// operations doesn't have meaning
+				if resName == "operations" || resName == "<unknown>"{
+					continue
 				}
-				res.operations[strings.ToLower(opName)] = opName
+				re := regexp.MustCompile(`\/{(\w)+}`)
+				opsPath := k+re.ReplaceAllString(pn,``)
+				if !strings.HasSuffix(opsPath,"/"){
+					opsPath = opsPath+"/"
+				}
+
+				var resId int32
+				if resId,ok =pvd.OpsPathMap[opsPath]; !ok{
+					if resId,ok = pvd.ResourceNameMap[resName];!ok{
+						resId = pvd.createResource()
+						pvd.ResourceNameMap[resName] = resId
+					}
+					pvd.OpsPathMap[opsPath] = resId
+				}
+
+				pvd.ResourceList.Resources[resId].appendVersion(ver)
+				// append resourceName to the set
+				pvd.ResourceList.Resources[resId].Name[resName] = resName
+				// append ops path to the set
+				pvd.ResourceList.Resources[resId].OperationReqPath[opsPath] = opsPath
+				pvd.ResourceList.Resources[resId].operations[strings.ToLower(opName)] = opName
 			} else {
 				return fmt.Errorf("No operationId found in %q (%q -> %q)", jsonPath, pn, k)
 			}

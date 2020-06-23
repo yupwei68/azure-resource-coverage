@@ -14,8 +14,10 @@ func (operations apispecOperations) supportedOperations(entry *CoverageEntry) st
 		if op.Provider != "" && op.Provider != "*" && op.Provider != entry.ProviderName {
 			matched = false
 		}
-		if op.Resource != "" && op.Resource != "*" && op.Resource != entry.ResourceName {
-			matched = false
+		for resName := range(entry.ResourceName){
+			if op.Resource != "" && op.Resource != "*" && op.Resource != resName {
+				matched = false
+			}
 		}
 		if matched {
 			opStr := ""
@@ -52,8 +54,10 @@ func (excludes apispecExcludes) isExcluded(entry *CoverageEntry) bool {
 		if excl.Provider != "" && excl.Provider != "*" && excl.Provider != entry.ProviderName {
 			matched = false
 		}
-		if excl.Resource != "" && excl.Resource != "*" && excl.Resource != entry.ResourceName {
-			matched = false
+		for resName := range(entry.ResourceName){
+			if excl.Resource != "" && excl.Resource != "*" && excl.Resource !=resName {
+				matched = false
+			}
 		}
 		if matched {
 			return true
